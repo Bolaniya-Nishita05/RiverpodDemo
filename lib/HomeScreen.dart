@@ -8,19 +8,19 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
+    var user = ref.watch(userProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("User Details"),
+        title: Text("User Details"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: Icon(Icons.logout),
             onPressed: () {
               ref.read(userProvider.notifier).state = null;
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                MaterialPageRoute(builder: (_) => LoginScreen()),
               );
             },
           )
@@ -28,12 +28,12 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: Center(
         child: user == null
-            ? const Text("No user logged in")
+            ? Text("No user logged in")
             : Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Welcome, ${user.name}", style: const TextStyle(fontSize: 22)),
-            Text("Email: ${user.email}", style: const TextStyle(fontSize: 18)),
+            Text("Welcome, ${user.name}", style: TextStyle(fontSize: 22)),
+            Text("Email: ${user.email}", style: TextStyle(fontSize: 18)),
           ],
         ),
       ),
