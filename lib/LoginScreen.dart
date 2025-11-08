@@ -10,9 +10,30 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingObserver {
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    debugPrint("LoginScreen initState()");
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint("LoginScreen Lifecycle: $state");
+  }
+
+  @override
+  void dispose() {
+    debugPrint("LoginScreen dispose()");
+    emailController.dispose();
+    passwordController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   void login() {
     if (emailController.text == "test@gmail.com" &&
