@@ -44,7 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
-              ref.read(userProvider.notifier).state = null;
+              ref.read(userProvider.notifier).state = AsyncValue.data(null);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -56,46 +56,59 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       body: Padding(
         padding: EdgeInsets.all(16.w),
         child: Center(
-          child: user == null
-            ? Text("No user logged in")
-            : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Welcome, ${user.name}", style: TextStyle(fontSize: 22)),
-                Text("Email: ${user.email}", style: TextStyle(fontSize: 18)),
-                Container(
-                  width: 300.w,  // responsive width
-                  height: 150.h, // responsive height
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(15.r), // responsive radius
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Responsive Container",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.sp, // responsive font
+          child: user.when(
+              data: (user) {
+                if (user == null) {
+                  return Center(
+                    child: Text("No user logged in"),
+                  );
+                }
+
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Welcome, ${user.name}", style: const TextStyle(fontSize: 22)),
+                    Text("Email: ${user.email}", style: const TextStyle(fontSize: 18)),
+                    Container(
+                      width: 300.w,
+                      height: 150.h,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(15.r),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Responsive Container",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.sp,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 30.w,
-                      vertical: 12.h,
+                    SizedBox(height: 20.h),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30.w,
+                          vertical: 12.h,
+                        ),
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                        "Click Me",
+                        style: TextStyle(fontSize: 16.sp),
+                      ),
                     ),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    "Click Me",
-                    style: TextStyle(fontSize: 16.sp),
-                  ),
-                ),
-              ],
-          ),
+                  ],
+                );
+              },
+
+              error: (err, stack) =>
+                  Center(child: Text("Error: ${err.toString()}")),
+
+              loading: () => Center(child: CircularProgressIndicator())
+          )
         ),
       ),
     );

@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpoddemo/HomeScreen.dart';
 import 'package:riverpoddemo/UserProvider.dart';
+import 'models/user.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +23,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     debugPrint("LoginScreen initState()");
+
+    final jsonResponse = {
+      "id": 1,
+      "name": "Nishita",
+      "email": "nishita@example.com"
+    };
+
+    final user = UserModel.fromJson(jsonResponse);
+
+    print(user.name); 
+
   }
 
   @override
@@ -35,22 +50,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     super.dispose();
   }
 
-  void login() {
-    if (emailController.text == "test@gmail.com" &&
-        passwordController.text == "123456") {
-
-      ref.read(userProvider.notifier).state =
-          User(name: "John Doe", email: emailController.text);
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+  void login() async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://jsonplaceholder.typicode.com/users'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': emailController.text}),
       );
-    } else {
+
+      if (response.statusCode==201) {
+        ref.read(userProvider.notifier).state =
+            AsyncValue.data(User(name: "John Doe", email: emailController.text));
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        final error = jsonDecode(response.body)['error'];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error ?? 'Login failed')),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Invalid credentials")),
+        SnackBar(content: Text('Error: $e')),
       );
     }
+
   }
 
   @override
