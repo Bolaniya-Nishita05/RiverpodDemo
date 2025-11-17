@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:riverpoddemo/LoginScreen.dart';
+import 'package:riverpoddemo/ToDoListScreen.dart';
 import 'package:riverpoddemo/UserProvider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -93,10 +94,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           horizontal: 30.w,
                           vertical: 12.h,
                         ),
+                        backgroundColor: Colors.green.shade50,
+                        foregroundColor: Colors.green,
+                        elevation: 5
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ToDoListScreen(),));
+                      },
                       child: Text(
-                        "Click Me",
+                        "Go to TODO List",
                         style: TextStyle(fontSize: 16.sp),
                       ),
                     ),

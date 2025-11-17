@@ -26,8 +26,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
 
     final jsonResponse = {
       "id": 1,
-      "name": "Nishita",
-      "email": "nishita@example.com"
+      "name": "abc",
+      "email": "abc@example.com"
     };
 
     final user = UserModel.fromJson(jsonResponse);
