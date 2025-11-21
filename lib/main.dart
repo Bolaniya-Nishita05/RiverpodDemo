@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:riverpoddemo/ToDoListScreen.dart';
+import 'package:riverpoddemo/l10n/AppLocalizations.dart';
 import 'LoginScreen.dart';
 
 void main() {
@@ -20,6 +22,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
+  Locale _locale = const Locale('en');
+
+  void changeLocale(Locale locale) {
+    setState(() => _locale = locale);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -48,21 +56,29 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
       builder: (context, child) {
         return MaterialApp(
           theme: ThemeData(
-              appBarTheme: AppBarTheme(
-                color: Colors.green.shade900,               // Background color
-                elevation: 4,                     // Shadow
-                titleTextStyle: TextStyle(        // Title style
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-                iconTheme: IconThemeData(         // Icon color
-                  color: Colors.white,
-                ),
-              )
+            appBarTheme: AppBarTheme(
+              color: Colors.green.shade900,               // Background color
+              elevation: 4,                     // Shadow
+              titleTextStyle: TextStyle(        // Title style
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+              iconTheme: IconThemeData(         // Icon color
+                color: Colors.white,
+              ),
+            )
           ),
           debugShowCheckedModeBanner: false,
-          home: LoginScreen(),
+          locale: _locale,
+          supportedLocales: const [Locale('en'), Locale('hi')],
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: LoginScreen(onChangeLanguage: changeLocale),
         );
       },
     );

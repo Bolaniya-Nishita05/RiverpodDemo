@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:riverpoddemo/models/todo.dart';
-import 'package:riverpoddemo/models/todo_list_response.dart';
 import 'package:riverpoddemo/services/todo_api.dart';
 
 class ToDoListScreen extends StatefulWidget {

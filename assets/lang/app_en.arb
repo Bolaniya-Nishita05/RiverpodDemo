@@ -1,0 +1,4 @@
+{
+  "greetingUser": "Welcome, {name}",
+  "btnMsg": "Go to TODO List"
+}

@@ -8,7 +8,9 @@ import 'models/user.dart';
 import 'package:http/http.dart' as http;
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  Function(Locale) onChangeLanguage;
+
+  LoginScreen({required this.onChangeLanguage, super.key});
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -64,7 +66,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => HomeScreen(onChangeLanguage: widget.onChangeLanguage)),
         );
       } else {
         final error = jsonDecode(response.body)['error'];
