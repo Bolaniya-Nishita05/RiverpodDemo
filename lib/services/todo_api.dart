@@ -5,22 +5,22 @@ import '../models/todo.dart';
 
 part 'todo_api.g.dart';
 
-@RestApi(baseUrl: "https://dummyjson.com")
+@RestApi(baseUrl: "https://6928ab26b35b4ffc501684b9.mockapi.io")
 abstract class TodoApi {
-  factory TodoApi(Dio dio, {String baseUrl}) = _TodoApi;
+  factory TodoApi(Dio dio, {String? baseUrl}) = _TodoApi;
 
-  @GET("/todos")
-  Future<TodoListResponse> getTodos();
+  @GET("/Todos")
+  Future<List<Todo>> getTodos();
 
-  @GET("/todos/{id}")
-  Future<Todo> getTodo(@Path("id") int id);
+  @GET("/Todos/{id}")
+  Future<Todo> getTodo(@Path("id") String id);
 
-  @POST("/todos/add")
+  @POST("/Todos")
   Future<Todo> createTodo(@Body() Map<String, dynamic> body);
 
-  @PUT("/todos/{id}")
-  Future<Todo> updateTodo(@Path("id") int id, @Body() Map<String, dynamic> body);
+  @PUT("/Todos/{id}")
+  Future<Todo> updateTodo(@Path("id") String id, @Body() Map<String, dynamic> body);
 
-  @DELETE("/todos/{id}")
-  Future<void> deleteTodo(@Path("id") int id);
+  @DELETE("/Todos/{id}")
+  Future<void> deleteTodo(@Path("id") String id);
 }

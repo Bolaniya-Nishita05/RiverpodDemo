@@ -14,7 +14,7 @@ class _TodoApi implements TodoApi {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://dummyjson.com';
+    baseUrl ??= 'https://6928ab26b35b4ffc501684b9.mockapi.io';
   }
 
   final Dio _dio;
@@ -24,19 +24,19 @@ class _TodoApi implements TodoApi {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<TodoListResponse> getTodos() async {
+  Future<List<Todo>> getTodos() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<TodoListResponse>(Options(
+    final _options = _setStreamType<List<Todo>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          '/todos',
+          '/Todos',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -45,10 +45,12 @@ class _TodoApi implements TodoApi {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late TodoListResponse _value;
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<Todo> _value;
     try {
-      _value = TodoListResponse.fromJson(_result.data!);
+      _value = _result.data!
+          .map((dynamic i) => Todo.fromJson(i as Map<String, dynamic>))
+          .toList();
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -57,7 +59,7 @@ class _TodoApi implements TodoApi {
   }
 
   @override
-  Future<Todo> getTodo(int id) async {
+  Future<Todo> getTodo(String id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -69,7 +71,7 @@ class _TodoApi implements TodoApi {
     )
         .compose(
           _dio.options,
-          '/todos/${id}',
+          '/Todos/${id}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -103,7 +105,7 @@ class _TodoApi implements TodoApi {
     )
         .compose(
           _dio.options,
-          '/todos/add',
+          '/Todos',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -125,7 +127,7 @@ class _TodoApi implements TodoApi {
 
   @override
   Future<Todo> updateTodo(
-    int id,
+    String id,
     Map<String, dynamic> body,
   ) async {
     final _extra = <String, dynamic>{};
@@ -140,7 +142,7 @@ class _TodoApi implements TodoApi {
     )
         .compose(
           _dio.options,
-          '/todos/${id}',
+          '/Todos/${id}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -161,7 +163,7 @@ class _TodoApi implements TodoApi {
   }
 
   @override
-  Future<void> deleteTodo(int id) async {
+  Future<void> deleteTodo(String id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -173,7 +175,7 @@ class _TodoApi implements TodoApi {
     )
         .compose(
           _dio.options,
-          '/todos/${id}',
+          '/Todos/${id}',
           queryParameters: queryParameters,
           data: _data,
         )
