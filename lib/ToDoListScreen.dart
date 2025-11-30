@@ -79,6 +79,8 @@ class ToDoListScreen extends ConsumerWidget {
                       IconButton(
                         icon: Icon(Icons.edit_note_outlined,color: Colors.green),
                         onPressed: () {
+                          editTitle.text=todo.todo;
+
                           showDialog(context: context, builder: (context) {
                               return AlertDialog(
                                 title: Text("Todo Title"),
