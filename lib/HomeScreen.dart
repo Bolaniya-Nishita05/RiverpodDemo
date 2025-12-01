@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:riverpoddemo/GetXScreen.dart';
 import 'package:riverpoddemo/LoginScreen.dart';
 import 'package:riverpoddemo/ToDoListScreen.dart';
 import 'package:riverpoddemo/UserProvider.dart';
@@ -131,6 +132,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                       widget.onChangeLanguage(locale);
                     },
                     child: Text('Change Language',
+                      style: TextStyle(fontSize: 16.sp),
+                    ),
+                  ),
+                  SizedBox(height: 20.h,),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30.w,
+                          vertical: 12.h,
+                        ),
+                        backgroundColor: Colors.blue.shade50,
+                        foregroundColor: Colors.blue,
+                        elevation: 5
+                    ),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => GetXScreen(),));
+                    },
+                    child: Text(
+                      "GetX Screen",
                       style: TextStyle(fontSize: 16.sp),
                     ),
                   ),

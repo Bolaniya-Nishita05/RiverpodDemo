@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:riverpoddemo/ToDoListScreen.dart';
 import 'package:riverpoddemo/l10n/AppLocalizations.dart';
 import 'LoginScreen.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(
@@ -54,7 +55,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
+        return GetMaterialApp(
           theme: ThemeData(
             appBarTheme: AppBarTheme(
               color: Colors.green.shade900,               // Background color
