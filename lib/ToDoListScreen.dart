@@ -7,7 +7,7 @@ import 'package:riverpoddemo/TodoProvider.dart';
 class ToDoListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final todos = ref.watch(todoListProvider);
+    final todoState = ref.watch(todoListProvider);
     TextEditingController addTitle=new TextEditingController();
     TextEditingController editTitle=new TextEditingController();
 
@@ -32,7 +32,9 @@ class ToDoListScreen extends ConsumerWidget {
                     onPressed: () {
                       Navigator.pop(context);
 
-                      ref.read(todoListProvider.notifier).addTodo(addTitle.text);
+                      if(addTitle.text.trim().length!=0){
+                        ref.read(todoListProvider.notifier).addTodo(addTitle.text);
+                      }
                     },
                     child: Text("Save"),
                     style: ElevatedButton.styleFrom(
@@ -52,29 +54,38 @@ class ToDoListScreen extends ConsumerWidget {
         },
         child: Icon(Icons.add),
       ),
-      body: todos.isEmpty
-        ? Center(child: Text("No data available"))
-        : ListView.builder(
-          itemCount: todos.length,
-          itemBuilder: (context, index) {
-            final todo = todos[index];
+      body: todoState.when(
+        loading: () => Center(child: CircularProgressIndicator()),
+        error: (err, _) {
+          return Center(
+            child: Text(err.toString(),style: TextStyle(color: Colors.red),)
+          );
+        },
+        data: (todos) {
+          if(todos.isEmpty){
+            return Center(child: Text("No data available"));
+          }
 
-            return Container(
-              margin: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.purple.shade50,
-              ),
-              child: ListTile(
-                title: Text(todo.todo),
-                leading: Checkbox(
-                  value: todo.completed,
-                  onChanged: (_) {
-                    ref.read(todoListProvider.notifier).updateTodo(todo);
-                  },
+          return ListView.builder(
+            itemCount: todos.length,
+            itemBuilder: (context, index) {
+              final todo = todos[index];
+
+              return Container(
+                margin: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.purple.shade50,
                 ),
-                trailing: Container(
-                  child: Wrap(
+                child: ListTile(
+                  title: Text(todo.todo),
+                  leading: Checkbox(
+                    value: todo.completed,
+                    onChanged: (_) {
+                      ref.read(todoListProvider.notifier).updateTodo(todo);
+                    },
+                  ),
+                  trailing: Wrap(
                     children: [
                       IconButton(
                         icon: Icon(Icons.edit_note_outlined,color: Colors.green),
@@ -82,35 +93,38 @@ class ToDoListScreen extends ConsumerWidget {
                           editTitle.text=todo.todo;
 
                           showDialog(context: context, builder: (context) {
-                              return AlertDialog(
-                                title: Text("Todo Title"),
-                                content: TextFormField(
-                                  controller: editTitle,
-                                  decoration: InputDecoration(
-                                      labelText: "Enter title"
-                                  ),
+                            return AlertDialog(
+                              title: Text("Todo Title"),
+                              content: TextFormField(
+                                controller: editTitle,
+                                decoration: InputDecoration(
+                                    labelText: "Enter title"
                                 ),
-                                actions: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+
+                                    if(editTitle.text.trim().length!=0){
                                       todo.todo=editTitle.text;
                                       ref.read(todoListProvider.notifier).updateTodo(todo);
-                                    },
-                                    child: Text("Save"),
-                                    style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 30.w,
-                                          vertical: 12.h,
-                                        ),
-                                        backgroundColor: Colors.green.shade50,
-                                        foregroundColor: Colors.green,
-                                        elevation: 5
-                                    ),
-                                  )
-                                ],
-                              );
-                            },
+                                    }
+                                  },
+                                  child: Text("Save"),
+                                  style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 30.w,
+                                        vertical: 12.h,
+                                      ),
+                                      backgroundColor: Colors.green.shade50,
+                                      foregroundColor: Colors.green,
+                                      elevation: 5
+                                  ),
+                                )
+                              ],
+                            );
+                          },
                           );
                         },
                       ),
@@ -118,7 +132,7 @@ class ToDoListScreen extends ConsumerWidget {
                       IconButton(
                         icon: Icon(Icons.delete,color: Colors.red,),
                         onPressed: () {
-                          showDialog(context: context, builder: (context) {
+                            showDialog(context: context, builder: (context) {
                               return AlertDialog(
                                 title: Text("DELETE!!",style: TextStyle(color: Colors.red),),
                                 content: Text("Are you sure, you want to delete??"),
@@ -164,10 +178,11 @@ class ToDoListScreen extends ConsumerWidget {
                     ]
                   ),
                 ),
-              ),
-            );
-          },
-        ),
+              );
+            },
+          );
+        }
+      )
     );
   }
 }

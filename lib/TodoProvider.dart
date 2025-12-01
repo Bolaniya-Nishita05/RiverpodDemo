@@ -4,7 +4,7 @@ import 'package:riverpoddemo/models/todo.dart';
 import 'package:riverpoddemo/services/todo_api.dart';
 
 final todoListProvider =
-StateNotifierProvider<TodoNotifier, List<Todo>>((ref) {
+StateNotifierProvider<TodoNotifier, AsyncValue<List<Todo>>>((ref) {
   final api = ref.read(todoApiProvider);
   return TodoNotifier(api);
 });
@@ -13,34 +13,32 @@ final todoApiProvider = Provider<TodoApi>((ref) {
   return TodoApi(Dio());
 });
 
-class TodoNotifier extends StateNotifier<List<Todo>> {
+class TodoNotifier extends StateNotifier<AsyncValue<List<Todo>>> {
   final TodoApi api;
 
-  TodoNotifier(this.api) : super([]) {
+  TodoNotifier(this.api) : super(const AsyncValue.loading()) {
     fetchTodos();
   }
 
   Future<void> fetchTodos() async {
     try {
       final todos = await api.getTodos();
-      state = todos;
-    } catch (e) {
-      print("Fetch error: $e");
+      state = AsyncValue.data(todos);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 
   Future<void> addTodo(String text) async {
     try {
-      final body = {
+      final newTodo = await api.createTodo({
         "todo": text,
         "completed": false,
-      };
+      });
 
-      final newTodo = await api.createTodo(body);
-
-      state = [...state, newTodo];
-    } catch (e) {
-      print("Add error: $e");
+      state = state.whenData((todos) => [...todos, newTodo]);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 
@@ -54,22 +52,26 @@ class TodoNotifier extends StateNotifier<List<Todo>> {
 
       await api.updateTodo(todo.id!, updated.toJson());
 
-      state = [
-        for (final t in state)
-          if (t.id == updated.id) updated else t,
-      ];
-    } catch (e) {
-      print("Update error: $e");
+      state = state.whenData(
+            (todos) => [
+          for (final t in todos)
+            if (t.id == updated.id) updated else t,
+        ],
+      );
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 
   Future<void> deleteTodo(String id) async {
     try {
-      // await api.deleteTodo(id);
+      await api.deleteTodo(id);
 
-      state = state.where((t) => t.id != id).toList();
-    } catch (e) {
-      print("Delete error: $e");
+      state = state.whenData(
+            (todos) => todos.where((t) => t.id != id).toList(),
+      );
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 }
